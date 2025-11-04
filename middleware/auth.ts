@@ -5,10 +5,10 @@ export interface AuthenticatedRequest extends NextRequest {
   user?: JWTPayload;
 }
 
-export const withAuth = (
-  handler: (request: AuthenticatedRequest) => Promise<NextResponse>
+export const withAuth = <T extends any[]>(
+  handler: (request: AuthenticatedRequest, ...args: T) => Promise<NextResponse>
 ) => {
-  return async (request: NextRequest) => {
+  return async (request: NextRequest, ...args: T) => {
     const user = getUserFromRequest(request);
 
     if (!user) {
@@ -22,14 +22,14 @@ export const withAuth = (
     const authRequest = request as AuthenticatedRequest;
     authRequest.user = user;
 
-    return handler(authRequest);
+    return handler(authRequest, ...args);
   };
 };
 
-export const withAdmin = (
-  handler: (request: AuthenticatedRequest) => Promise<NextResponse>
+export const withAdmin = <T extends any[]>(
+  handler: (request: AuthenticatedRequest, ...args: T) => Promise<NextResponse>
 ) => {
-  return async (request: NextRequest) => {
+  return async (request: NextRequest, ...args: T) => {
     const user = getUserFromRequest(request);
 
     if (!user) {
@@ -49,6 +49,6 @@ export const withAdmin = (
     const authRequest = request as AuthenticatedRequest;
     authRequest.user = user;
 
-    return handler(authRequest);
+    return handler(authRequest, ...args);
   };
 };
